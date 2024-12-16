@@ -22,10 +22,11 @@ const scene = new THREE.Scene();
  */
 // Geometry
 const waterGeometry = new THREE.PlaneGeometry(2, 2, 512, 512);
+waterGeometry.deleteAttribute("normal");
 
 // Debug Colors
-debugObject.depthColor = "#3C97C8";
-debugObject.surfaceColor = "#75CAFF";
+debugObject.depthColor = "#ff4000";
+debugObject.surfaceColor = "#151c37";
 
 // Material
 const waterMaterial = new THREE.ShaderMaterial({
@@ -38,12 +39,13 @@ const waterMaterial = new THREE.ShaderMaterial({
     uBigWavesFrequency: { value: new THREE.Vector2(4, 1.5) },
     uDepthColor: { value: new THREE.Color(debugObject.depthColor) },
     uSurfaceColor: { value: new THREE.Color(debugObject.surfaceColor) },
-    uColorOffset: { value: 0.08 },
-    uColorMultiplier: { value: 5 },
+    uColorOffset: { value: 0.925 },
+    uColorMultiplier: { value: 1 },
     uSmallWavesElevation: { value: 0.15 },
     uSmallWavesFrequency: { value: 3 },
     uSmallWavesSpeed: { value: 0.2 },
     uSmallIterations: { value: 4 },
+    uShift: { value: 0.01 },
   },
 });
 
@@ -121,6 +123,12 @@ gui
   .max(5)
   .step(1)
   .name("uSmallIterations");
+gui
+  .add(waterMaterial.uniforms.uShift, "value")
+  .min(-5)
+  .max(5)
+  .step(0.001)
+  .name("uShift");
 
 /**
  * Sizes
@@ -167,6 +175,7 @@ controls.enableDamping = true;
 const renderer = new THREE.WebGLRenderer({
   canvas: canvas,
 });
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.setSize(sizes.width, sizes.height);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
